@@ -1,0 +1,20 @@
+{
+    "packageDirectories": [
+        {
+            "path": "force-app",
+            "default": true,
+            "package": "dreamhouseJP",
+            "versionName": "ver 1.0",
+            "versionNumber": "1.0.1.NEXT"
+        }
+    ],
+    "namespace": "",
+    "sfdcLoginUrl": "https://login.salesforce.com",
+    "sourceApiVersion": "45.0",
+    "packageAliases": {
+        "dreamhouseJP": "0Ho7F000000TNEdSAO",
+        "dreamhouseJP@0.1.0-1": "04t7F000005dAXHQA2",
+        "dreamhouseJP@1.0.0-1": "04t7F000005dAXMQA2",
+        "dreamhouseJP@1.0.1-1": "04t7F000005dAXRQA2"
+    }
+}

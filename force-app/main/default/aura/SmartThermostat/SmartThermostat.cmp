@@ -1,0 +1,14 @@
+<aura:component >
+
+	<!-- Components that allows users to control connected thermostats -->
+
+	<aura:attribute name="currentTemp" type="Integer" default="28"/>
+	<aura:attribute name="requestedTemp" type="Integer" default="28"/>
+    
+    <div>
+        <div class="current-temp">{!v.currentTemp}°</div>
+        <div class="requested-temp">{!v.requestedTemp}°</div>
+        <input class="slider" min='0' max='50' type='range' value='{!v.requestedTemp}' oninput='{!c.sliderInputHandler}'/>
+    </div>
+
+</aura:component>

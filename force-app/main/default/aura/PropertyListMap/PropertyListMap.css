@@ -1,0 +1,16 @@
+.THIS {
+    width: 100%;
+    z-index: 0;
+}
+
+.THIS .leaflet-container {
+    height: 550px;
+}
+
+.THIS .slds-card__header {
+    display: none;
+}
+
+.THIS .slds-card__body {
+    margin-bottom: 0;
+}

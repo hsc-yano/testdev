@@ -1,0 +1,594 @@
+<apex:page controller="DreamHouseSampleDataController">
+    
+    <apex:slds />
+    
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    
+        <apex:remoteObjects >
+    
+            <apex:remoteObjectModel name="Bot_Command__c" jsShorthand="BotCommand">
+                <apex:remoteObjectField name="Name" jsShorthand="name"/>
+                <apex:remoteObjectField name="Apex_Class__c" jsShorthand="apexClass"/>
+                <apex:remoteObjectField name="Pattern__c" jsShorthand="pattern"/>
+                <apex:remoteObjectField name="Sample_Utterance__c" jsShorthand="sampleUtterance"/>
+            </apex:remoteObjectModel>
+
+            <apex:remoteObjectModel name="Broker__c" jsShorthand="Broker">
+                <apex:remoteObjectField name="Name" jsShorthand="name"/>
+                <apex:remoteObjectField name="Title__c" jsShorthand="title"/>
+                <apex:remoteObjectField name="Phone__c" jsShorthand="phone"/>
+                <apex:remoteObjectField name="Mobile_Phone__c" jsShorthand="mobile_phone"/>
+                <apex:remoteObjectField name="Email__c" jsShorthand="email"/>
+                <apex:remoteObjectField name="Picture__c" jsShorthand="picture"/>
+            </apex:remoteObjectModel>
+    
+            <apex:remoteObjectModel name="Property__c" jsShorthand="Property">
+                <apex:remoteObjectField name="Name" jsShorthand="name"/>
+                <apex:remoteObjectField name="Address__c" jsShorthand="address"/>
+                <apex:remoteObjectField name="City__c" jsShorthand="city"/>
+                <apex:remoteObjectField name="State__c" jsShorthand="state"/>
+                <apex:remoteObjectField name="Zip__c" jsShorthand="zip"/>
+                <apex:remoteObjectField name="Price__c" jsShorthand="price"/>
+                <apex:remoteObjectField name="Assessed_Value__c" jsShorthand="assessed"/>
+                <apex:remoteObjectField name="Date_Listed__c" jsShorthand="dateListed"/>
+                <apex:remoteObjectField name="Title__c" jsShorthand="title"/>
+                <apex:remoteObjectField name="Beds__c" jsShorthand="bedrooms"/>
+                <apex:remoteObjectField name="Baths__c" jsShorthand="bathrooms"/>
+                <apex:remoteObjectField name="Status__c" jsShorthand="status"/>
+                <apex:remoteObjectField name="Broker__c" jsShorthand="brokerId"/>
+                <apex:remoteObjectField name="Picture__c" jsShorthand="pic"/>
+                <apex:remoteObjectField name="Thumbnail__c" jsShorthand="thumb"/>
+                <apex:remoteObjectField name="Tags__c" jsShorthand="tags"/>
+                <apex:remoteObjectField name="Description__c" jsShorthand="description"/>
+                <apex:remoteObjectField name="Location__Latitude__s" jsShorthand="lat"/>
+                <apex:remoteObjectField name="Location__Longitude__s" jsShorthand="long"/>
+            </apex:remoteObjectModel>
+            
+        </apex:remoteObjects>
+        
+        <body style="padding:0;margin:0">
+            
+        <div class="slds-scope">
+            <div class="slds-page-header" role="banner">
+                <div class="slds-media">
+                    <div class="slds-media__figure">
+                        <svg aria-hidden="true" class="slds-icon slds-icon--large slds-icon-standard-opportunity">
+                            <use xlink:href="{!URLFOR($Asset.SLDS,'/assets/icons/custom-sprite/svg/symbols.svg#custom57')}"></use>
+                        </svg>
+                    </div>
+                    <div class="slds-media__body">
+                        <p class="slds-page-header__title slds-truncate slds-align-middle" title="DreamHouse Sample Data">ドリームハウスサンプルデータ</p>
+                        <p class="slds-text-body--small slds-page-header__info">ドリームハウスサンプルアプリケーションのサンプルデータです。</p>
+                    </div>
+                </div>
+            </div>
+            <div id="content" style="margin:20px">
+                <div style="padding-bottom:20px">以下のボタンをクリックして物件、ブローカー、お気に入りオブジェクトをサンプルデータで初期化します。
+                    <div style="color:red">これらのオブジェクトの既存のレコードは全て削除されます。</div>
+                </div>
+                <button class="slds-button slds-button--brand" onclick="initialize()">サンプルデータで初期化</button>
+            </div>
+            
+            <div id="spinner" class="slds-spinner_container" style="display:none">
+              <div class="slds-spinner slds-spinner--large" role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+              </div>
+            </div>
+            
+        </div>
+        
+        <script>
+    
+        function getRandomNumber(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+            
+        var brokers = [
+        {
+            name: "山本 香澄",
+            title: "住宅コンサルタント",
+            phone: "03-2244-3672",
+            mobile_phone: "090-4244-3672",
+            email: "kyamamoto@dreamhouseappjp.io",
+            picture: "https://static.dreamhouseappjp.io/images/dreamhousejp-broker1.jpg"
+        },
+        {
+            name: "新堂 純一",
+            title: "主任住宅コンサルタント",
+            phone: "03-2444-3674",
+            mobile_phone: "090-2344-3672",
+            email: "jshindo@dreamhouseappjp.io",
+            picture: "https://static.dreamhouseappjp.io/images/dreamhousejp-broker2.jpg"
+        },
+        {
+            name: "横山 さおり",
+            title: "住宅コンサルタント",
+            phone: "03-2434-4672",
+            mobile_phone: "090-9244-3672",
+            email: "syokoyama@dreamhouseappjp.io",
+            picture: "https://static.dreamhouseappjp.io/images/dreamhousejp-broker3.jpg"
+        },
+        {
+            name: "秋山 美幸",
+            title: "シニア住宅コンサルタント",
+            phone: "03-4244-3672",
+            mobile_phone: "090-1244-3672",
+            email: "makiyama@dreamhouseappjp.io",
+            picture: "https://static.dreamhouseappjp.io/images/dreamhousejp-broker4.jpg"
+        },
+        {
+            name: "周防 美雨",
+            title: "アソシエイト住宅コンサルタント",
+            phone: "03-6244-3672",
+            mobile_phone: "090-5244-3672",
+            email: "msubo@dreamhouseappjp.io",
+            picture: "https://static.dreamhouseappjp.io/images/dreamhousejp-broker5.jpg"
+        },
+        {
+            name: "吉高 幸司",
+            title: "主任住宅コンサルタント",
+            phone: "03-4244-3672",
+            mobile_phone: "090-0244-3672",
+            email: "kyoshitaka@dreamhouseappjp.io",
+            picture: "https://static.dreamhouseappjp.io/images/dreamhousejp-broker6.jpg"
+        },
+        {
+            name: "高橋 美春",
+            title: "住宅コンサルタント",
+            phone: "03-1244-3672",
+            mobile_phone: "090-2244-3672",
+            email: "mtakahashi@dreamhouseappjp.io",
+            picture: "https://static.dreamhouseappjp.io/images/dreamhousejp-broker7.jpg"
+        },
+        {
+            name: "掛布 洋子",
+            title: "住宅コンサルタント",
+            phone: "03-2444-3672",
+            mobile_phone: "090-1244-3672",
+            email: "ykakefu@dreamhouseappjp.io",
+            picture: "https://static.dreamhouseappjp.io/images/dreamhousejp-broker8.jpg"
+        }
+    
+        ];
+    
+        var properties = [
+        {
+            address: "北品川4丁目18番",
+            city: "品川",
+            state: "東京都",
+            zip: "1400001",
+            price: 97500000,
+            title: "ウォーターフロントタワー",
+            bedrooms: 4,
+            bathrooms: 2,
+            long: 139.736394,
+            lat: 35.621529,
+            pic: "https://static.dreamhouseappjp.io/images/dreamhousejp-exterior1.jpg",
+            thumb: "https://static.dreamhouseappjp.io/images/dreamhousejp-exterior1.jpg",
+            tags: "contemporary",
+            description: "目の前に川の流れる見晴らしの良いタワーマンション物件です。",
+            broker: 0
+        },
+        {
+            address: "六本木2丁目24番",
+            city: "六本木",
+            state: "東京都",
+            zip: "1060032",
+            price: 99000000,
+            title: "モダンリビング",
+            bedrooms: 5,
+            bathrooms: 4,
+            long: 139.736972,
+            lat: 35.665990,
+            pic: "https://static.dreamhouseappjp.io/images/dreamhousejp-interior1.jpg",
+            thumb: "https://static.dreamhouseappjp.io/images/dreamhousejp-interior1.jpg",
+            tags: "colonial",
+            description: "ブランドシステムキッチンが特徴のデザイナーズ物件です。",
+            broker: 1
+        },
+        {
+            address: "高輪2丁目7番2号",
+            city: "品川",
+            state: "東京都",
+            zip: "1420052",
+            price: 82500000,
+            title: "シティーエントランス",
+            bedrooms: 5,
+            bathrooms: 4,
+            long: 139.733924,
+            lat: 35.635758,
+            pic: "https://static.dreamhouseappjp.io/images/dreamhousejp-robby1.jpg",
+            thumb: "https://static.dreamhouseappjp.io/images/dreamhousejp-robby1.jpg",
+            tags: "colonial",
+            description: "モダンなエントランスが特徴の駅近物件です。",
+            broker: 2
+        },
+        {
+            address: "南麻布3丁目2番",
+            city: "六本木",
+            state: "東京都",
+            zip: "1060032",
+            price: 93000000,
+            title: "都心の閑静街",
+            bedrooms: 5,
+            bathrooms: 4,
+            long: 139.728668,
+            lat: 35.650996,
+            pic: "https://static.dreamhouseappjp.io/images/dreamhousejp-exterior2.jpg",
+            thumb: "https://static.dreamhouseappjp.io/images/dreamhousejp-exterior2.jpg",
+            tags: "victorian",
+            description: "都心にありながら、周りが静かで良好な生活圏です。六本木ヒルズ徒歩2分",
+            broker: 3
+        },
+        {
+            address: "大崎1丁目10番",
+            city: "品川",
+            state: "東京都",
+            zip: "1420052",
+            price: 85000000,
+            title: "アーバンスタイル",
+            bedrooms: 3,
+            bathrooms: 2,
+            long: 139.729533,
+            lat: 35.620571, 
+            pic: "https://static.dreamhouseappjp.io/images/dreamhousejp-exterior3.jpg",
+            thumb: "https://static.dreamhouseappjp.io/images/dreamhousejp-exterior3.jpg",
+            tags: "victorian",
+            description: "コストパフォーマンスの良い、築浅物件です。",
+            broker: 4
+        },
+        {
+            address: "南品川4丁目48号",
+            city: "品川",
+            state: "東京都",
+            zip: "1420052",
+            price: 72500000,
+            title: "モダンスタイル一軒家",
+            bedrooms: 4,
+            bathrooms: 2,
+            long: 139.738493,
+            lat: 35.608954,
+            pic: "https://static.dreamhouseappjp.io/images/dreamhousejp-exterior4.jpg",
+            thumb: "https://static.dreamhouseappjp.io/images/dreamhousejp-exterior4.jpg",
+            tags: "victorian",
+            description: "品川駅徒歩15分圏内にありながら、ゆったりとした贅沢な土地使いの物件が到着です。",
+            broker: 5
+        },
+        {
+            address: "北品川1丁目2番7号",
+            city: "品川",
+            state: "東京都",
+            zip: "1420052",
+            price: 45000000,
+            title: "シティリビング",
+            bedrooms: 3,
+            bathrooms: 1,
+            long: 139.739612,
+            lat: 35.622558,
+            pic: "https://static.dreamhouseappjp.io/images/dreamhousejp-exterior5.jpg",
+            thumb: "https://static.dreamhouseappjp.io/images/dreamhousejp-exterior5.jpg",
+            tags: "victorian",
+            description: "品川地区で人気のシティリビングシリーズです。",
+            broker: 6
+        },
+        {
+            address: "六本木6丁目10番",
+            city: "六本木",
+            state: "東京都",
+            zip: "1060032",
+            price: 45000000,
+            title: "流行の中心地",
+            bedrooms: 5,
+            bathrooms: 4,
+            long: 139.729989,
+            lat: 35.658193,
+            pic: "https://static.dreamhouseappjp.io/images/dreamhousejp-exterior6.jpg",
+            thumb: "https://static.dreamhouseappjp.io/images/dreamhousejp-exterior6.jpg",
+            tags: "victorian",
+            description: "六本木の中心にあるラグジュアリーマンション。コンドミニアムタイプもあり",
+            broker: 7
+        },
+        {
+            address: "高輪3丁目2番",
+            city: "品川",
+            state: "東京都",
+            zip: "1420052",
+            price: 45000000,
+            title: "閑静かつモダン",
+            bedrooms: 3,
+            bathrooms: 3,
+            long: 139.732456,
+            lat: 35.635150,
+            pic: "https://static.dreamhouseappjp.io/images/dreamhousejp-exterior7.jpg",
+            thumb: "https://static.dreamhouseappjp.io/images/dreamhousejp-exterior7.jpg",
+            tags: "colonial",              
+            description: "高級住宅街の中でも、お買い得なプライス",
+            broker: 0
+        },
+        {
+            address: "北新宿2丁目6番",
+            city: "新宿",
+            state: "東京都",
+            zip: "1690074",
+            price: 45000000,
+            title: "駅近ハイクラス物件",
+            bedrooms: 3,
+            bathrooms: 3,
+            long: 139.690307,
+            lat: 35.701432,
+            pic: "https://static.dreamhouseappjp.io/images/dreamhousejp-exterior8.jpg",
+            thumb: "https://static.dreamhouseappjp.io/images/dreamhousejp-exterior8.jpg",
+            tags: "colonial",              
+            description: "新宿にありながら、広い間取りと駅近物件。",
+            broker: 0
+        },            
+        {
+            address: "南新宿3丁目3番",
+            city: "新宿",
+            state: "東京都",
+            zip: "1690074",
+            price: 45000000,
+            title: "ハイクラス物件",
+            bedrooms: 3,
+            bathrooms: 3,
+            long: 139.726011,
+            lat: 35.703752,
+            pic: "https://static.dreamhouseappjp.io/images/dreamhousejp-exterior9.jpg",
+            thumb: "https://static.dreamhouseappjp.io/images/dreamhousejp-exterior9.jpg",
+            tags: "contemporary",              
+            description: "徒歩圏内にスーパーと病院あり",
+            broker: 0
+        },
+        {
+            address: "西新宿1丁目4番",
+            city: "新宿",
+            state: "東京都",
+            zip: "1690074",
+            price: 95000000,
+            title: "超高層タワーマンション",
+            bedrooms: 3,
+            bathrooms: 3,
+            long: 139.695606,
+            lat: 35.694131,
+            pic: "https://static.dreamhouseappjp.io/images/dreamhousejp-exterior10.jpg",
+            thumb: "https://static.dreamhouseappjp.io/images/dreamhousejp-exterior10.jpg",
+            tags: "contemporary",              
+            description: "一度は住んでみたい憧れの物件が登場",
+            broker: 0
+        },
+        {
+            address: "南品川6丁目4号",
+            city: "品川",
+            state: "東京都",
+            zip: "1420052",
+            price: 65000000,
+            title: "シティリビング",
+            bedrooms: 2,
+            bathrooms: 2,
+            long: 139.738228,
+            lat: 35.611609,
+            pic: "https://static.dreamhouseappjp.io/images/dreamhousejp-interior2.jpg",
+            thumb: "https://static.dreamhouseappjp.io/images/dreamhousejp-interior2.jpg",
+            tags: "colonial",
+            description: "人気のシティリビングが品川にも登場",
+            broker: 1
+        }
+        /*
+        {
+            address: "港南2丁目9番",
+            city: "品川",
+            state: "東京都",
+            zip: "1420052",
+            price: 69000000,
+            title: "デザイナーズ住宅",
+            bedrooms: 3,
+            bathrooms: 3,
+            lat: 139.733185,
+            long: 35.624670,
+            pic: "https://static.dreamhouseappjp.io/images/dreamhousejp-interior3.jpg",
+            thumb: "https://static.dreamhouseappjp.io/images/dreamhousejp-interior3.jpg",
+            tags: "現代的",
+            description: "品川地区のひときは目立つデザイナーズ物件",
+            broker: 0
+        },
+        {
+            address: "港南3丁目45番",
+            city: "品川",
+            state: "東京都",
+            zip: "1420052",
+            price: 84500000,
+            title: "コンテンポラリーラグジュアリー",
+            bedrooms: 4,
+            bathrooms: 3,
+            lat: 139.748623,
+            long: 35.633177,
+            pic: "https://static.dreamhouseappjp.io/images/dreamhousejp-interior4.jpg",
+            thumb: "https://static.dreamhouseappjp.io/images/dreamhousejp-interior4.jpg",
+            tags: "ラグジュアリー",              
+            description: "ラグジュアリーな住居をお探しであればこちらがお勧め。",
+            broker: 1
+        }*/
+            
+        ];
+            
+		var botCommands = [
+        {
+                name: "取引先を探す",
+                apexClass: "HandlerFindAccount",
+                pattern: "(?i).*取引先検索 (.*)",
+                sampleUtterance: "取引先検索 United"
+			},
+            {
+                name: "取引先責任者を探す",
+                apexClass: "HandlerFindContact",
+                pattern: "(?i).*取引先責任者検索 (.*)",
+                sampleUtterance: "取引先責任者検索 jo"
+			},
+            {
+                name: "物件を探す",
+                apexClass: "HandlerFindProperties",
+                pattern: "(?i)物件検索",
+                sampleUtterance: "物件検索"
+			},
+            {
+                name: "部屋数から物件を探す",
+                apexClass: "HandlerFindPropertiesByBedrooms",
+                pattern: "(?i)部屋数:([0-9]*) 場所:(.*)",
+                sampleUtterance: "部屋数:3 場所:新宿"
+			},
+            {
+                name: "ヘルプ",
+                apexClass: "HandlerHelp",
+                pattern: "(?i)ヘルプ",
+                sampleUtterance: "ヘルプ"
+			},
+            {
+                name: "私のオープンケース",
+                apexClass: "HandlerMyOpenCases",
+                pattern: "(?i).*オープンケース.*",
+                sampleUtterance: "私のオープンケース"
+			},
+            {
+                name: "パイプライン",
+                apexClass: "HandlerPipeline",
+                pattern: "(?i).*パイプライン.*",
+                sampleUtterance: "私のパイプライン"
+			},
+            {
+                name: "四半期売上",
+                apexClass: "HandlerQuarter",
+                pattern: "(?i).*四半期売上.*",
+                sampleUtterance: "私の四半期売上"
+			},
+            {
+                name: "SOQL",
+                apexClass: "HandlerSOQL",
+                pattern: "(?i)select.*",
+                sampleUtterance: "SELECT Name FROM Contact LIMIT 5"
+			},
+            {
+                name: "トップ商談",
+                apexClass: "HandlerTopOpportunities",
+                pattern: "(?i).*トップ (\\d+) 商談",
+                sampleUtterance: "トップ 3 商談"
+			},
+            {
+                name: "出張承認",
+                apexClass: "HandlerTravelApproval",
+                pattern: "(?i)出張承認",
+                sampleUtterance: "出張承認"
+			},
+           {
+                name: "画像検索",
+                apexClass: "HandlerImageBasedSearch",
+                pattern: "(?i)物件画像検索",
+                sampleUtterance: "物件画像検索 (+ファイルを選択)"
+			},
+            {
+                name: "ファイルアップロード",
+                apexClass: "HandlerFileUpload",
+                pattern: "(?i)アップロード",
+                sampleUtterance: "アップロード (+ファイルを選択)"
+			}
+            
+		];
+    
+        function initialize() {
+            // Delete all existing brokers and properties
+            Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.DreamHouseSampleDataController.deleteAll}', 
+                function(result, event) {
+                    if (event.status) {
+                        loadRecords();
+                    } else {
+                        alert("既存のレコードを削除する際に問題が発生しました");
+                    }
+                });
+        }
+        
+        function loadRecords() {
+            var promises = [];
+            showSpinner(true);
+            for (var i=0; i<brokers.length; i++) {
+                promises.push(createBroker(i));
+            }
+            for (var j=0; j<botCommands.length; j++) {
+                promises.push(createBotCommand(j));
+            }
+            Promise.all(promises).then(
+                function() {
+                    showSpinner(false);
+                    showStatus(properties.length + " 件の物件と, " + brokers.length + " 人の担当者, " + botCommands.length + " 個のBotコマンドのインポートが成功しました");    
+                },
+                function(error) {
+                    showSpinner(false);
+                    showStatus("エラーが発生しました。 " + error);
+                });
+        }
+            
+        function createBroker(index) {
+            return new Promise(function(resolve, reject) {
+                var brokerRO = new SObjectModel.Broker();
+                brokerRO.create(brokers[index], function(err, brokerId) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        var propertyCreatePromises = [];
+                        for (var j=0; j<properties.length; j++) {
+                            if (properties[j].broker == index) {
+                                properties[j].name = properties[j].address; 
+                                properties[j].status = "公開中"; 
+                                properties[j].brokerId = brokerId[0];
+                                properties[j].assessed = properties[j].price * getRandomNumber(65, 90) / 100;
+                                properties[j].dateListed = new Date(new Date() - getRandomNumber(3, 50) * 86400000);
+                                delete properties[j].broker; 
+                                propertyCreatePromises.push(createProperty(properties[j]));
+                            }
+                        }
+                        Promise.all(propertyCreatePromises).then(resolve, reject);
+                    }
+                });
+            });
+        }            
+                
+        function createBotCommand(index) {
+            return new Promise(function(resolve, reject) {
+                var botCommandRO = new SObjectModel.BotCommand();
+                botCommandRO.create(botCommands[index], function(err, botCommandId) {
+                    if (err) {
+                        reject(err);
+                    } else {
+						resolve();
+                    }
+                });
+            });
+        }            
+
+		function createProperty(property) {
+            return new Promise(function(resolve, reject) {
+                var propertyRO = new SObjectModel.Property();
+                propertyRO.create(property, function(err, propertyId) {
+                    if (err) {
+                        reject(err)
+                    } else {
+                        resolve(propertyId);
+                    }
+                });
+            });
+        }  
+            
+        function showSpinner(visible) {
+            document.getElementById("spinner").style.display = visible ? "inline" : "none";
+        }
+
+        function showStatus(status) {
+            setTimeout(function() {
+                alert(status);
+            });
+        }
+            
+        </script>
+        </body>
+    </html>    
+</apex:page>
